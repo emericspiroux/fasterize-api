@@ -1,11 +1,18 @@
 {
   "name": "fasterize-api",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "export ENVIRONNEMENT=DEV; node app.js",
+    "lint": "eslint ./",
+    "test": "export ENVIRONNEMENT=TEST; mocha --exit tests/index.test.js"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "dependencies": {
+    "axios": "^0.19.2",
+    "basic-log": "^0.1.2",
     "body-parser": "^1.19.0",
     "constantinople": "^4.0.1",
     "cookie-parser": "~1.4.3",
@@ -18,6 +25,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "eslint": "^7.6.0",
+    "mocha": "^8.1.0",
     "mocka": "0.0.1",
     "pre-commit": "^1.2.2",
     "supertest": "^4.0.2"

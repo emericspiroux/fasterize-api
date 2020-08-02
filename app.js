@@ -1,60 +1,44 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express')
+const bodyParser = require('body-parser')
+const logguer = require('basic-log')
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+const configuration = require('./config')
 
-var app = express();
+const Routes = require('./routes')
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+const CrossOrigin = require('./Helpers/CrossOrigin')
+const FasterizeErrorMiddleware = require('./Helpers/ErrorHandler/FasterizeErrorMiddleware')
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+const app = express();
 
-app.use('/', routes);
-app.use('/users', users);
+// --------------- CORS ---------------------
+app.use((...args) => CrossOrigin.any(...args));
+app.use('/origin', (...args) => CrossOrigin.origin(...args))
+// --------------- END CORS -----------------
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+// --------------- BODY PARSER --------------
+app.use(bodyParser.json({limit:"100mb"}));
+app.use(bodyParser.urlencoded({extended:true}));
+// --------------- END BODY PARSER ----------
 
-// error handlers
+// --------------- ROUTE INFOS --------------
+app.use((req, _, next) => {
+	logguer.i(req.method + " " + req.originalUrl)
+	next()
+})
+// --------------- END ROUTE INFOS ----------
 
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
+// --------------- ROUTE DEFINE --------------
+app.use(Routes);
+// --------------- END ROUTE DEFINE ----------
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
+// --------------- ROUTE ERROR --------------
+app.use((err, req, res, next) => FasterizeErrorMiddleware(err, res)); //eslint-disable-line no-unused-vars
+// --------------- END ROUTE ERROR ----------
 
+// --------------- LAUNCH SERVER -------------
+app.listen(configuration.port);
+console.log(`\x1b[34m[INFO INIT]\x1b[0m Starting Server on port ${configuration.port}: \x1b[32mOK\x1b[0m`);
+// --------------- END LAUNCH SERVER ---------
 
-module.exports = app;
+module.exports = app
