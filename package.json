@@ -7,8 +7,9 @@
     "lint": "eslint ./",
     "test": "export ENVIRONNEMENT=TEST; mocha --exit tests/index.test.js"
   },
-  "pre-commit": [
-    "lint"
+  "precommit": [
+    "lint",
+    "test"
   ],
   "dependencies": {
     "axios": "^0.19.2",
