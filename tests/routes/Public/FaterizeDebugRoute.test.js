@@ -17,7 +17,7 @@ function testWith(app) {
           expect(res.body).to.have.property("statusCode").that.is.a("number").to.eql(200)
           expect(res.body).to.have.property("fstrzFlags").that.is.a("array").to.eql(["optimized","cached"])
           expect(res.body).to.have.property("cloudfrontStatus").that.is.a("string").to.eql("MISS")
-          expect(res.body).to.have.property("cloudfrontPOP").that.is.a("string").to.eql("Paris")
+          expect(res.body).to.have.property("cloudfrontPOP").that.is.a("string").to.satisfy((value) => value === "Paris" || value === "London")
           done()
         })
     });

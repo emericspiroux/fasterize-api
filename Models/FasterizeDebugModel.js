@@ -17,7 +17,7 @@ class FasterizeDebugModel {
     this.statusCode = headers["statusCode"]
     if (this.plugged) {
       this.fstrzFlags = this.fstrzFlagsDecode(headers["x-fstrz"])
-      this.cloudfrontStatus = headers["x-cache"] === "Miss from cloudfront" ? "MISS" : "HIT"
+      this.cloudfrontStatus = this.cloudfrontStatusDecode(headers["x-cache"])
       this.cloudfrontPOP = this.cloudfrontPOPDecode(headers["x-amz-cf-pop"])
     }
   }
@@ -25,6 +25,17 @@ class FasterizeDebugModel {
   fstrzFlagsDecode(flagsString) {
     let fasterizeFlagDecoder = new FasterizeFlagDecoder(flagsString)
     return fasterizeFlagDecoder.decode()
+  }
+
+  cloudfrontStatusDecode(xCache) {
+    switch (xCache) {
+      case "Hit from cloudfront":
+        return "HIT"
+      case "Miss from cloudfront":
+        return "MISS"
+      default:
+        return "ERROR"
+    }
   }
 
   cloudfrontPOPDecode(flagsString) {
