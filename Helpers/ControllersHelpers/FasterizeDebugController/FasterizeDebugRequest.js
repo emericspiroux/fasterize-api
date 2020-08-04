@@ -14,7 +14,7 @@ class FasterizeDebugRequest {
    * with response header. Can throw Axios error.
    */
   async exec() {
-    let response = await axios.get(this.url)
+    let response = await axios.get(this.url, {timeout: 900})
     let header = response.headers
     header.statusCode = response.status
     this.headers = header

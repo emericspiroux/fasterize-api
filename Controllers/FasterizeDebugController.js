@@ -2,7 +2,6 @@ const FasterizeDebugRequest = require('../Helpers/ControllersHelpers/FasterizeDe
 const FasterizeError = require('../Helpers/ErrorHandler/FasterizeError')
 const FasterizeDebugModel = require('../Models/FasterizeDebugModel')
 
-
 class FasterizeDebugController {
   async get(req, res, next) {
     let url = req.query.url
@@ -14,6 +13,8 @@ class FasterizeDebugController {
       let fasterizeDebugModel = new FasterizeDebugModel(fasterizeDebugRequest.headers)
       res.send(fasterizeDebugModel.toJSON())
     } catch (err) {
+      if (err && (err.code === "ECONNRESET" || err.code === "ENOTFOUND" || err.code === "ECONNABORTED"))
+        return next(new FasterizeError(404, "Website not found"))
       next(err)
     }
   }

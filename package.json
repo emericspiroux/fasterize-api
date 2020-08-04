@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "start": "export ENVIRONNEMENT=DEV; node app.js",
-    "lint": "eslint ./",
-    "test": "export ENVIRONNEMENT=TEST; mocha --exit tests/index.test.js"
+    "lint": "node ./node_modules/eslint/bin/eslint.js ./",
+    "test": "export ENVIRONNEMENT=TEST; ./node_modules/mocha/bin/mocha --exit tests/index.test.js",
+    "prod": "export ENVIRONNEMENT=PROD; node app.js"
   },
   "precommit": [
     "lint",

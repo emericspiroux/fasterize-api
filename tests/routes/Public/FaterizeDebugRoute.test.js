@@ -3,9 +3,11 @@ const expect = require('chai').expect;
 
 let goodUrl = encodeURI("https://www.fasterize.com/fr/")
 let failUrl = encodeURI("https://google.fr")
+let notFoundUrl = encodeURI("https://test404website-9872398792872398729387.fr")
+let connResetUrl = encodeURI("https://fasterize.com")
 
 function testWith(app) {
-  describe('/', () => {
+  describe('Debug fasterize, route : /', () => {
     it('with fasterize plugged website', (done) => {
       request(app)
         .get(`/?url=${goodUrl}`)
@@ -35,6 +37,26 @@ function testWith(app) {
         .expect(400)
         .end((_, res) => {
           expect(res.body).to.have.property("code").that.is.a("number").to.eql(400)
+          expect(res.body).to.have.property("message").that.is.a("string")
+          done()
+        })
+    });
+    it('with not found website', (done) => {
+      request(app)
+        .get(`/?url=${notFoundUrl}`)
+        .expect(404)
+        .end((_, res) => {
+          expect(res.body).to.have.property("code").that.is.a("number").to.eql(404)
+          expect(res.body).to.have.property("message").that.is.a("string")
+          done()
+        })
+    });
+    it('with connection reset website', (done) => {
+      request(app)
+        .get(`/?url=${connResetUrl}`)
+        .expect(404)
+        .end((_, res) => {
+          expect(res.body).to.have.property("code").that.is.a("number").to.eql(404)
           expect(res.body).to.have.property("message").that.is.a("string")
           done()
         })

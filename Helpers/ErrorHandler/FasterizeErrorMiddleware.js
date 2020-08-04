@@ -1,5 +1,3 @@
-const Logguer = require('basic-log')
-
 const FasterizeError = require('./FasterizeError')
 
 /**
@@ -14,7 +12,6 @@ function FasterizeErrorMiddleware(error, res) {
       .status(error.statusCode || 500)
       .send({code: error.statusCode, message: error.message, details: error.details})
   } else {
-    Logguer.e("Internal Error :", error)
     res
       .status(500)
       .send({code: 500, message: "Internal error"})
